@@ -2,69 +2,21 @@ name=username
 name=email
 name=password
 name=submitButton
-
 id=username
 id=email
 id=password
 id=submitButton
 id=loginForm
-
 class=username-field
 class=email-field
 class=password-field
 class=submit-btn
 class=form-container
-
 tagName=button
 tagName=input
 tagName=div
-
 linkText=Sign Up
 linkText=Forgot Password
 
 partialLinkText=Sign
 partialLinkText=Password
-
-cssSelector=input[name='username']
-cssSelector=input[type='password']
-cssSelector=button.submit
-cssSelector=div.form-container
-
-xpath=//input[@id='username']
-xpath=//input[@name='password']
-xpath=//button[text()='Submit']
-xpath=//div[contains(@class, 'form')]
-
-xpath=//input[starts-with(@id, 'user')]
-xpath=//input[ends-with(@name, 'pass')]
-xpath=//div[contains(@class, 'container')]
-
-xpath=//form//input[@name='username']
-xpath=//div[@id='login']//button[text()='Login']
-
-cssSelector=[data-test='submitButton']
-xpath=//*[@data-test='submitButton']
-
-cssSelector=input[placeholder='Enter username']
-xpath=//input[@placeholder='Enter username']
-
-cssSelector=div > input[type='email']
-cssSelector=form .login-container input
-
-cssSelector=.form-container .input-field
-cssSelector=button.submit.btn-primary
-
-cssSelector=input[type='text'][name='username']
-cssSelector=button[data-action='submit']
-
-xpath=//input[@type='text' and @name='username']
-xpath=//form[@id='loginForm']//input[@name='password']
-
-xpath=//button[contains(text(),'Submit')]
-xpath=//div[contains(@class, 'form-container')]
-
-cssSelector=[role='button']
-xpath=//*[@role='button']
-
-cssSelector=[title='Click to submit']
-xpath=//*[@title='Click to submit']
