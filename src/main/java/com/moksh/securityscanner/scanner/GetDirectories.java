@@ -11,6 +11,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 public class GetDirectories {
     private static WebDriver driver;
+    public int counter = 0;
     private HashSet<String> directories = new HashSet<>();
 
     public boolean isValidUrl(String linkUrl, String baseUrl) {
@@ -26,13 +27,16 @@ public class GetDirectories {
         return false;
     }
 
-    public void getDirectories(String baseUrl) {
+    public HashSet<String> getDirectories(String baseUrl) {
+        
         if (directories.contains(baseUrl)) {
+            counter++;
             System.out.println("Already scanned this URL: " + baseUrl);
-            return;
+            return directories;
         }
         directories.add(baseUrl);
         try {
+            
             driver.get(baseUrl);
             System.out.println("Title of the web page is: " + driver.getTitle());
             Thread.sleep(1000);
@@ -41,11 +45,15 @@ public class GetDirectories {
                 String linkUrl = link.getAttribute("href");
                 if (linkUrl != null && isValidUrl(linkUrl, baseUrl) && !directories.contains(linkUrl)) {
                     getDirectories(linkUrl);
+                    counter++;
+                    // Process the links if needed
                 }
             }
         } catch (Exception e) {
             System.out.println("Error while scanning the URL: " + baseUrl);
         }
+        System.out.println("Total number of links: "+counter);
+        return directories;
     }
 
     public static void main(String[] args) {
