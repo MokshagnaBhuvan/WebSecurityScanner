@@ -1,8 +1,8 @@
 package com.moksh.securityscanner.scanner;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.edge.EdgeDriver;
+// import org.openqa.selenium.firefox.FirefoxDriver;
+// import org.openqa.selenium.edge.EdgeDriver;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -41,6 +41,9 @@ System.out.println("Title of the web page is: "+driver.getTitle());
 
 for(String locator : Locators){
     String[] LocatorParts = locator.split("=");
+    for(String part : LocatorParts){
+        System.out.println(part);
+    }
     String locatorType = LocatorParts[0];
     String locatorValue = LocatorParts[1];
 
@@ -78,6 +81,8 @@ for(String locator : Locators){
     }
     
 }
-    
+sc.close();
+driver.close();
 }
+
 }
