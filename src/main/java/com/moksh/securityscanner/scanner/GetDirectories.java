@@ -66,5 +66,6 @@ public class GetDirectories {
         driver = new ChromeDriver();
         GetDirectories gd = new GetDirectories();
         gd.getDirectories(baseUrl);
+        driver.quit();
     }
 }
