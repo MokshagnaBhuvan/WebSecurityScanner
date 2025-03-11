@@ -3,6 +3,7 @@ import java.util.HashSet;
 import java.net.URL;
 import java.util.List;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -11,6 +12,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 public class GetDirectories {
     private static WebDriver driver;
+    public ArrayList <WebElement> visited_links = new ArrayList<WebElement>();
     public int counter = 0;
     private HashSet<String> directories = new HashSet<>();
 
@@ -32,7 +34,7 @@ public class GetDirectories {
         if (directories.contains(baseUrl)) {
             counter++;
             System.out.println("Already scanned this URL: " + baseUrl);
-            return directories;
+            // return directories;
         }
         directories.add(baseUrl);
         try {
@@ -40,11 +42,29 @@ public class GetDirectories {
             driver.get(baseUrl);
             System.out.println("Title of the web page is: " + driver.getTitle());
             Thread.sleep(1000);
+            
             List<WebElement> links = driver.findElements(By.tagName("a"));
+            List<WebElement> buttonLinks = driver.findElements(By.tagName("button"));
+            for (WebElement button : buttonLinks){
+                String buttonUrl = button.getAttribute("href");
+                if(buttonUrl!=null && buttonUrl.contains("Window.location.href")){
+                    int start_index =  buttonUrl.indexOf("'") +1;
+                    int end_index = buttonUrl.lastIndexOf("'");
+                    buttonUrl = buttonUrl.substring(start_index, end_index);
+
+                    if (!buttonUrl.equals(null) && isValidUrl(buttonUrl, baseUrl) && !directories.contains(buttonUrl)) {
+                        getDirectories(buttonUrl);
+                        counter++;
+                        visited_links.add(button);
+
+                    }
+                }
+            }
             for (WebElement link : links) {
                 String linkUrl = link.getAttribute("href");
                 if (linkUrl != null && isValidUrl(linkUrl, baseUrl) && !directories.contains(linkUrl)) {
                     getDirectories(linkUrl);
+                    visited_links.add(link);
                     counter++;
                     // Process the links if needed
                 }
@@ -54,6 +74,7 @@ public class GetDirectories {
         }
         System.out.println("Total number of links: "+counter);
         return directories;
+        
     }
 
     public static void main(String[] args) {
@@ -67,5 +88,6 @@ public class GetDirectories {
         GetDirectories gd = new GetDirectories();
         gd.getDirectories(baseUrl);
         driver.quit();
+        gd.visited_links.forEach(link -> System.out.println(link));
     }
 }
