@@ -1,33 +1,35 @@
-package com.moksh.securityscanner.scanner;
+package com.moksh.securityscanner.scanner; // spell-checker: disable-line
 
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+// import java.time.Duration; // Unused import
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.List;
-import java.util.Scanner;
 
 public class inputFieldCheck {
-    
     public void checkInputFields(String url) {
         GetDirectories availableDirectories = new GetDirectories();
-        Scanner sc = new Scanner(System.in);
-        List<String> Locators = new ArrayList<>();
-        String path = "/home/white7minato/WebSecurityScanner/src/main/java/com/moksh/securityscanner/scanner/possibleLocators.txt";
+        List<String> locators = new ArrayList<>();
+        String path = "/home/white7minato/WebSecurityScanner/src/main/java/com/moksh/securityscanner/scanner/possibleLocators.txt"; // spell-checker: disable-line
+        
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String line;
             while ((line = br.readLine()) != null) {
-                Locators.add(line);
+                locators.add(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
-
+        
+        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver"); // spell-checker: disable-line
         WebDriver driver = new ChromeDriver();
+        
         try {
             driver.get(url);
             System.out.println("Title of the base web page is: " + driver.getTitle());
@@ -35,7 +37,13 @@ public class inputFieldCheck {
             e.printStackTrace();
         }
 
-        for (String directory : availableDirectories.getDirectories(url)) {
+        Set<String> directories = availableDirectories.getDirectories(url);
+        
+        if (directories.isEmpty()) {
+            System.out.println("No directories found for the given URL: " + url);
+        }
+        
+        for (String directory : directories) {
             try {
                 driver.get(directory);
                 System.out.println("Checking directory: " + directory);
@@ -44,41 +52,58 @@ public class inputFieldCheck {
                 continue;
             }
 
-            for (String locator : Locators) {
-                String[] LocatorParts = locator.split("=");
-                String locatorType = LocatorParts[0];
-                String locatorValue = LocatorParts[1];
+            for (String locator : locators) {
+                String[] locatorParts = locator.split("=");
+                if (locatorParts.length != 2) {
+                    System.out.println("Invalid locator format: " + locator);
+                    continue;
+                }
+                
+                String locatorType = locatorParts[0];
+                String locatorValue = locatorParts[1];
 
                 try {
-                    WebElement inputField = null;
-                    if (locatorType.equalsIgnoreCase("id")) {
-                        inputField = driver.findElement(By.id(locatorValue));
-                    } else if (locatorType.equalsIgnoreCase("name")) {
-                        inputField = driver.findElement(By.name(locatorValue));
-                    } else if (locatorType.equalsIgnoreCase("className")) {
-                        inputField = driver.findElement(By.className(locatorValue));
-                    } else if (locatorType.equalsIgnoreCase("tagName")) {
-                        inputField = driver.findElement(By.tagName(locatorValue));
-                    } else if (locatorType.equalsIgnoreCase("linkText")) {
-                        inputField = driver.findElement(By.linkText(locatorValue));
-                    } else if (locatorType.equalsIgnoreCase("partialLinkText")) {
-                        inputField = driver.findElement(By.partialLinkText(locatorValue));
-                    } else if (locatorType.equalsIgnoreCase("cssSelector")) {
-                        inputField = driver.findElement(By.cssSelector(locatorValue));
-                    } else if (locatorType.equalsIgnoreCase("xpath")) {
-                        inputField = driver.findElement(By.xpath(locatorValue));
-                    } else {
-                        System.out.println("Invalid locator type");
-                    }
+                    WebDriverWait wait = new WebDriverWait(driver, 2); 
+
+    
+    WebElement inputField = null;
+    switch (locatorType.toLowerCase()) {
+        case "id":
+            inputField = wait.until(ExpectedConditions.presenceOfElementLocated(By.id(locatorValue)));
+            break;
+        case "name":
+            inputField = wait.until(ExpectedConditions.presenceOfElementLocated(By.name(locatorValue)));
+            break;
+        case "classname":
+            inputField = wait.until(ExpectedConditions.presenceOfElementLocated(By.className(locatorValue)));
+            break;
+        case "tagname": // spell-checker: disable-line
+            inputField = wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName(locatorValue)));
+            break;
+        case "linktext": // spell-checker: disable-line
+            inputField = wait.until(ExpectedConditions.presenceOfElementLocated(By.linkText(locatorValue)));
+            break;
+        case "partiallinktext": // spell-checker: disable-line
+            inputField = wait.until(ExpectedConditions.presenceOfElementLocated(By.partialLinkText(locatorValue)));
+            break;
+        case "cssselector": // spell-checker: disable-line
+            inputField = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(locatorValue)));
+            break;
+        case "xpath":
+            inputField = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(locatorValue)));
+            break;
+        default:
+            System.out.println("Invalid locator type: " + locatorType);
+    }
                     if (inputField != null) {
                         System.out.println("Input field found in directory: " + directory + " with locator: " + locator);
                     }
-                } catch (Exception e) {
+                } catch (NoSuchElementException e) {
                     System.out.println("Element not found in directory: " + directory + " with locator: " + locator);
                 }
             }
         }
-        sc.close();
-        driver.close();
+        
+        driver.quit();
     }
 }
