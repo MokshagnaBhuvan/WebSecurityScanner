@@ -66,13 +66,12 @@ public class GetDirectories {
                     getDirectories(linkUrl);
                     visited_links.add(link);
                     counter++;
-                    // Process the links if needed
+                    
                 }
             }
         } catch (Exception e) {
             System.out.println("Error while scanning the URL: " + baseUrl);
         }
-        System.out.println("Total number of links: "+counter);
         return directories;
         
     }
@@ -88,6 +87,12 @@ public class GetDirectories {
         GetDirectories gd = new GetDirectories();
         gd.getDirectories(baseUrl);
         driver.quit();
-        gd.visited_links.forEach(link -> System.out.println(link));
+     
+        // gd.visited_links.forEach(link -> System.out.println(link));
+        System.out.println("Total number of links: "+gd.counter);
+        
+        // for (String directory:gd.directories){
+        //     System.out.println(directory);
+        // }
     }
 }

@@ -14,5 +14,6 @@ public class App
         String url = sc.nextLine();
         checkVuln check = new checkVuln();
         check.scanForVulnerabilities(url);
+        sc.close();
     }
 }
